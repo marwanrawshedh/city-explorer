@@ -7,6 +7,7 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Error from "./component/Error";
 import "./App.css";
+import Weather from "./component/Weather";
 
 class App extends React.Component {
   constructor(props) {
@@ -14,9 +15,12 @@ class App extends React.Component {
     this.state = {
       lat: "",
       lon: "",
-      displayName: "",
+      name: "",
       mapFlag: false,
       displayError: false,
+      day1: ["", ""],
+      // day2: [{weather:"",time:""}],
+      // day3: [{weather:"",time:""}]
     };
   }
 
@@ -24,16 +28,21 @@ class App extends React.Component {
     event.preventDefault();
     let cityName = event.target.cityName.value;
     let Key = "pk.3a03040a7da21c03158a0c3c542c001a";
-    let url= `https://eu1.locationiq.com/v1/search.php?key=${Key}&q=${cityName}&format=json`;
+
+    let url = `https://cityexplorerlab07.herokuapp.com/weather?name=${cityName}&format=json`;
     try {
       let newLocation = await axios.get(url);
       this.setState({
         lat: newLocation.data[0].lat,
         lon: newLocation.data[0].lon,
-        displayName: newLocation.data[0].display_name,
+        name: newLocation.data[0].city,
+        day1: [newLocation.data[0].day1.time, newLocation.data[0].day1.weather],
+        day2: [newLocation.data[0].day2.time, newLocation.data[0].day2.weather],
+        day3: [newLocation.data[0].day3.time, newLocation.data[0].day3.weather],
 
         mapFlag: true,
       });
+      console.log(newLocation.data[0].day1)
     } catch {
       this.setState({
         displayError: true,
@@ -45,7 +54,7 @@ class App extends React.Component {
     return (
       <>
         <body>
-          <Header  />
+          <Header />
           <h4>Where would you like to explore? </h4>
           <Form onSubmit={this.getting}>
             <input type="text" name="cityName" placeholder="Enter city name" />
@@ -55,22 +64,29 @@ class App extends React.Component {
             </Button>
           </Form>
           {this.state.mapFlag && (
-          <div id="one">
-          
-            <h3>Welcome to {this.state.displayName} </h3>
-            {this.state.displayName} is located at {this.state.lat} by{" "}
-            {this.state.lon}
-            
-          </div>)}
+            <div id="one">
+
+              <h3>Welcome to {this.state.name} </h3>
+              {this.state.name} is located at {this.state.lat} by{" "}
+              {this.state.lon}
+
+            </div>)}
 
           <div id="two">
             {this.state.mapFlag && (
               <img
-                src={`https://maps.locationiq.com/v3/staticmap?key=pk.5555b1da753853cd352a4bfe2f089b71&center=${this.state.lat},${this.state.lon}&zoom=1-18&format=png`}
+                src={`https://maps.locationiq.com/v3/staticmap?key=pk.d4cac4082161bc94613452c95d844ce3&center=${this.state.lat},${this.state.lon}&zoom=1-18&format=png`}
                 alt="map"
               />
             )}
           </div>
+          {this.state.mapFlag && (
+          <Weather
+
+            day1={this.state.day1}
+            day2={this.state.day2}
+            day3={this.state.day3}
+          />)}
           <Error error={this.state.displayError} />
 
           <Footer />
