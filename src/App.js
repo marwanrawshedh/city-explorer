@@ -8,7 +8,6 @@ import Button from "react-bootstrap/Button";
 import Error from "./component/Error";
 import "./App.css";
 import Weather from "./component/Weather";
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -18,38 +17,34 @@ class App extends React.Component {
       name: "",
       mapFlag: false,
       displayError: false,
-      day1: ["", ""],
-      // day2: [{weather:"",time:""}],
-      // day3: [{weather:"",time:""}]
+      weather: [],
+
     };
   }
-
   getting = async (event) => {
     event.preventDefault();
     let cityName = event.target.cityName.value;
-    let Key = "pk.3a03040a7da21c03158a0c3c542c001a";
-
+    let Key = "pk.10f3b8757c535cf26cbecbd040cf2ed5";
+    let url1 = `https://eu1.locationiq.com/v1/search.php?key=${Key}&q=${cityName}&format=json`
     let url = `https://cityexplorerlab07.herokuapp.com/weather?name=${cityName}&format=json`;
     try {
       let newLocation = await axios.get(url);
+      let newLocation1 = await axios.get(url1);
       this.setState({
-        lat: newLocation.data[0].lat,
-        lon: newLocation.data[0].lon,
-        name: newLocation.data[0].city,
-        day1: [newLocation.data[0].day1.time, newLocation.data[0].day1.weather],
-        day2: [newLocation.data[0].day2.time, newLocation.data[0].day2.weather],
-        day3: [newLocation.data[0].day3.time, newLocation.data[0].day3.weather],
-
+        lat: newLocation1.data[0].lat,
+        lon: newLocation1.data[0].lon,
+        name: cityName,
+        weather: newLocation.data,
         mapFlag: true,
       });
-      console.log(newLocation.data[0].day1)
+      console.log(newLocation1.data)
+      console.log(newLocation.data)
     } catch {
       this.setState({
         displayError: true,
       });
     }
   };
-
   render() {
     return (
       <>
@@ -69,24 +64,27 @@ class App extends React.Component {
               <h3>Welcome to {this.state.name} </h3>
               {this.state.name} is located at {this.state.lat} by{" "}
               {this.state.lon}
-
             </div>)}
-
           <div id="two">
             {this.state.mapFlag && (
               <img
-                src={`https://maps.locationiq.com/v3/staticmap?key=pk.d4cac4082161bc94613452c95d844ce3&center=${this.state.lat},${this.state.lon}&zoom=1-18&format=png`}
+                src={`https://maps.locationiq.com/v3/staticmap?key=pk.10f3b8757c535cf26cbecbd040cf2ed5&center=${this.state.lat},${this.state.lon}&zoom=1-18&format=png`}
                 alt="map"
               />
             )}
           </div>
           {this.state.mapFlag && (
-          <Weather
-
-            day1={this.state.day1}
-            day2={this.state.day2}
-            day3={this.state.day3}
-          />)}
+            <Weather
+              weather={this.state.weather.map((item) => {
+                return (
+                  <>
+                    <p>Date: {item.date}</p>
+                    <p>Description: {item.desc}</p>
+                  </>
+                );
+              })}
+            />
+          )}
           <Error error={this.state.displayError} />
 
           <Footer />
