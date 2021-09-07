@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Error from "./component/Error";
 import "./App.css";
 import Weather from "./component/Weather";
+import Movies from "./component/Movies";
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -18,27 +19,31 @@ class App extends React.Component {
       mapFlag: false,
       displayError: false,
       weather: [],
-
+      movies: [],
     };
   }
   getting = async (event) => {
     event.preventDefault();
     let cityName = event.target.cityName.value;
-    let Key = "pk.10f3b8757c535cf26cbecbd040cf2ed5";
-    let url1 = `https://eu1.locationiq.com/v1/search.php?key=${Key}&q=${cityName}&format=json`
-    let url = `https://cityexplorerlab07.herokuapp.com/weather?name=${cityName}&format=json`;
+    let Key = "pk.43fed3791d35ddb76aa14f749c6d3080";
+    let url = `https://eu1.locationiq.com/v1/search.php?key=${Key}&q=${cityName}&format=json`
+    let urlweather = `https://cityexplorerlab07.herokuapp.com/weather?name=${cityName}`;
+    let urlmovies  =  `https://cityexplorerlab07.herokuapp.com/movies?name=${cityName}`;
+
     try {
       let newLocation = await axios.get(url);
-      let newLocation1 = await axios.get(url1);
+      let newLocation1 = await axios.get(urlweather);
+      let newLocation2 = await axios.get(urlmovies);
       this.setState({
-        lat: newLocation1.data[0].lat,
-        lon: newLocation1.data[0].lon,
+        lat: newLocation.data[0].lat,
+        lon: newLocation.data[0].lon,
         name: cityName,
-        weather: newLocation.data,
+        weather: newLocation1.data,
         mapFlag: true,
+        movies: newLocation2.data,
       });
-      console.log(newLocation1.data)
-      console.log(newLocation.data)
+      // console.log(newLocation2.data)
+      // console.log(newLocation.data)
     } catch {
       this.setState({
         displayError: true,
@@ -68,7 +73,7 @@ class App extends React.Component {
           <div id="two">
             {this.state.mapFlag && (
               <img
-                src={`https://maps.locationiq.com/v3/staticmap?key=pk.10f3b8757c535cf26cbecbd040cf2ed5&center=${this.state.lat},${this.state.lon}&zoom=1-18&format=png`}
+                src={`https://maps.locationiq.com/v3/staticmap?key=pk.43fed3791d35ddb76aa14f749c6d3080&center=${this.state.lat},${this.state.lon}&zoom=1-18&format=png`}
                 alt="map"
               />
             )}
@@ -84,6 +89,24 @@ class App extends React.Component {
                 );
               })}
             />
+
+          )}
+          {this.state.mapFlag && (
+            <Movies
+              Movies={this.state.movies.map((item) => {
+                return (
+                  <>
+                    <p>title":{item.title}</p>
+                    <p>overview":{item.overview}</p>
+                    <p>average_votes":{item.average_votes}</p>
+                    <p>total_votes": {item.total_votes}</p>
+                    <p>popularity":{item.popularity}</p>
+                    <p>released_on": {item.released_on} </p>
+                  </>
+                );
+              })}
+            />
+
           )}
           <Error error={this.state.displayError} />
 
