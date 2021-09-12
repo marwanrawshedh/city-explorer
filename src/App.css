@@ -42,7 +42,8 @@
   color: white;
 }
 body {
-  background-color: rgb(230, 212, 178);
+  background-color: rgb(117, 117, 117);width: 85%;margin: auto;
+  align-items: center; text-align: center;
 }
 
 #one {
@@ -52,3 +53,4 @@ body {
 #two {
   left: 100px;
 }
+form{margin: auto;}
