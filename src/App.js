@@ -9,6 +9,10 @@ import Error from "./component/Error";
 import "./App.css";
 import Weather from "./component/Weather";
 import Movies from "./component/Movies";
+import Card from 'react-bootstrap/Card'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import ListGroup from 'react-bootstrap/ListGroup'
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +32,7 @@ class App extends React.Component {
     let Key = "pk.43fed3791d35ddb76aa14f749c6d3080";
     let url = `https://eu1.locationiq.com/v1/search.php?key=${Key}&q=${cityName}&format=json`
     let urlweather = `https://cityexplorerlab07.herokuapp.com/weather?name=${cityName}`;
-    let urlmovies  =  `https://cityexplorerlab07.herokuapp.com/movies?name=${cityName}`;
+    let urlmovies = `https://cityexplorerlab07.herokuapp.com/movies?name=${cityName}`;
 
     try {
       let newLocation = await axios.get(url);
@@ -42,8 +46,7 @@ class App extends React.Component {
         mapFlag: true,
         movies: newLocation2.data,
       });
-      // console.log(newLocation2.data)
-      // console.log(newLocation.data)
+
     } catch {
       this.setState({
         displayError: true,
@@ -78,35 +81,65 @@ class App extends React.Component {
               />
             )}
           </div>
-          {this.state.mapFlag && (
+          {this.state.mapFlag && (<Row xs={1} md={3} className="g-4">
             <Weather
               weather={this.state.weather.map((item) => {
                 return (
                   <>
-                    <p>Date: {item.date}</p>
-                    <p>Description: {item.desc}</p>
+                    <Col>
+                      <Card style={{ width: '18rem' }}>
+                        <ListGroup variant="flush">
+
+                          <ListGroup.Item>Date: {item.date}</ListGroup.Item>
+                          <ListGroup.Item>Description: {item.desc}</ListGroup.Item>
+                        </ListGroup>
+                      </Card>
+                    </Col>
                   </>
                 );
               })}
             />
-
+          </Row>
           )}
-          {this.state.mapFlag && (
+
+
+
+
+
+
+          {this.state.mapFlag && (<Row xs={1} md={3} className="g-4">
             <Movies
               Movies={this.state.movies.map((item) => {
                 return (
                   <>
-                    <p>title":{item.title}</p>
-                    <p>overview":{item.overview}</p>
-                    <p>average_votes":{item.average_votes}</p>
-                    <p>total_votes": {item.total_votes}</p>
-                    <p>popularity":{item.popularity}</p>
-                    <p>released_on": {item.released_on} </p>
+                    <Col>
+                      <Card>
+                        <Card.Img variant="top" src={item.image} />
+                        <Card.Body>
+                          <Card.Title>title:{item.title}</Card.Title>
+                          <Card.Text>overview:
+                            {item.overview}
+                          </Card.Text>
+                          <Card.Text>average_votes:
+                            {item.average_votes}
+                          </Card.Text>
+                          <Card.Text>total_votes:
+                            {item.total_votes}
+                          </Card.Text>
+                          <Card.Text>popularity:
+                            {item.popularity}
+                          </Card.Text>
+                          <Card.Text>released_on:
+                            {item.released_on}
+                          </Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Col>
                   </>
                 );
               })}
             />
-
+          </Row>
           )}
           <Error error={this.state.displayError} />
 
